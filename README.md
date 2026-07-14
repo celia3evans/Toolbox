@@ -13,7 +13,7 @@ A bilingual (EN/FR) multi-page resource hub for engineering students and student
 | Category | `/category.html?cat=<name>` | Resources filtered to a single category |
 | Saved | `/saved.html` | Your locally bookmarked resources |
 | Profile | `/profile.html` | Sign in with Google (Google Identity Services) |
-| About | `/about.html` | CFES mission statement and contact info |
+| About | `/about.html` | About the tool and contact info |
 
 ---
 
