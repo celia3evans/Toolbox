@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile — Toolbox</title>
+  <link rel="stylesheet" href="/public/css/style.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <a class="logo" href="/">Toolbox</a>
+    <div class="header-controls">
+      <button class="lang-toggle" aria-label="Switch language" id="lang-toggle-btn">FR</button>
+      <button class="hamburger" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+    </div>
+  </header>
+
+  <nav class="nav-menu" aria-hidden="true">
+    <button class="nav-close" aria-label="Close menu">&times;</button>
+    <ul>
+      <li><a href="/"               data-i18n="nav.home">Home</a></li>
+      <li><a href="/resources.html" data-i18n="nav.resources">All Resources</a></li>
+      <li><a href="/saved.html"     data-i18n="nav.saved">Saved</a></li>
+      <li><a href="/profile.html"   data-i18n="nav.profile">Profile</a></li>
+      <li><a href="/about.html"     data-i18n="nav.about">About</a></li>
+    </ul>
+  </nav>
+  <div class="nav-overlay" aria-hidden="true"></div>
+
+  <main>
+    <div class="profile-page">
+      <div class="profile-card">
+
+        <div id="signin-view">
+          <p class="signin-description" data-i18n="profile.signinDesc">Sign in to access your profile.</p>
+          <div id="g_id_signin"></div>
+          <button class="btn btn-ghost" id="manual-signin-btn" aria-label="Sign in with Google"
+            data-i18n="profile.signinBtn" style="display: none;">Sign in with Google</button>
+        </div>
+
+        <div id="signedIn-view" hidden>
+          <img class="avatar" id="user-avatar" src="" alt="Profile picture" />
+          <p class="profile-name" id="user-name"></p>
+          <p class="profile-email" id="user-email"></p>
+          <button class="btn btn-ghost" id="signout-btn" data-i18n="profile.signoutBtn">Sign out</button>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <script src="/public/js/config.js"></script>
+  <script src="/public/js/translations.js"></script>
+  <script src="/public/js/i18n.js"></script>
+  <script src="/public/js/api.js"></script>
+  <script src="/public/js/cards.js"></script>
+  <script src="/public/js/nav.js"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <script>
+    function parseJwt(token) {
+      var base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+      return JSON.parse(atob(base64));
+    }
+
+    function showSignedIn() {
+      var name    = sessionStorage.getItem('cfes-user-name')    || '';
+      var picture = sessionStorage.getItem('cfes-user-picture') || '';
+      var email   = sessionStorage.getItem('cfes-user-email')   || '';
+      document.getElementById('user-name').textContent  = name;
+      document.getElementById('user-email').textContent = email;
+      var avatar = document.getElementById('user-avatar');
+      avatar.src = picture;
+      avatar.alt = name || 'Profile picture';
+      document.getElementById('signin-view').hidden   = true;
+      document.getElementById('signedIn-view').hidden = false;
+    }
+
+    function showSignedOut() {
+      document.getElementById('signedIn-view').hidden = true;
+      document.getElementById('signin-view').hidden   = false;
+    }
+
+    function handleCredentialResponse(response) {
+      var payload = parseJwt(response.credential);
+      sessionStorage.setItem('cfes-user-name',    payload.name    || '');
+      sessionStorage.setItem('cfes-user-picture', payload.picture || '');
+      sessionStorage.setItem('cfes-user-email',   payload.email   || '');
+      showSignedIn();
+    }
+
+    function initGIS() {
+      if (!window.google || !window.google.accounts) { setTimeout(initGIS, 200); return; }
+      google.accounts.id.initialize({ client_id: CONFIG.googleClientId, callback: handleCredentialResponse });
+      google.accounts.id.renderButton(
+        document.getElementById('g_id_signin'),
+        { theme: 'filled_black', size: 'large', locale: getLang() }
+      );
+      document.getElementById('manual-signin-btn').addEventListener('click', function () {
+        google.accounts.id.prompt();
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      initLang();
+      initNav();
+
+      var langBtn = document.getElementById('lang-toggle-btn');
+      langBtn.addEventListener('click', function () {
+        var next = getLang() === 'en' ? 'fr' : 'en';
+        setLang(next);
+        langBtn.textContent = next === 'en' ? 'FR' : 'EN';
+      });
+      langBtn.textContent = getLang() === 'en' ? 'FR' : 'EN';
+
+      document.getElementById('signout-btn').addEventListener('click', function () {
+        sessionStorage.removeItem('cfes-user-name');
+        sessionStorage.removeItem('cfes-user-picture');
+        sessionStorage.removeItem('cfes-user-email');
+        showSignedOut();
+      });
+
+      if (sessionStorage.getItem('cfes-user-name')) showSignedIn();
+    });
+
+    window.onload = function () {
+      if (window.google && window.google.accounts) initGIS();
+      else setTimeout(initGIS, 300);
+    };
+  </script>
+
+</body>
+</html>

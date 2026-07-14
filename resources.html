@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>All Resources — Toolbox</title>
+  <link rel="stylesheet" href="/public/css/style.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <a class="logo" href="/">Toolbox</a>
+    <div class="header-controls">
+      <button class="lang-toggle" aria-label="Switch language" id="lang-toggle-btn">FR</button>
+      <button class="hamburger" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+    </div>
+  </header>
+
+  <nav class="nav-menu" aria-hidden="true">
+    <button class="nav-close" aria-label="Close menu">&times;</button>
+    <ul>
+      <li><a href="/"               data-i18n="nav.home">Home</a></li>
+      <li><a href="/resources.html" data-i18n="nav.resources">All Resources</a></li>
+      <li><a href="/saved.html"     data-i18n="nav.saved">Saved</a></li>
+      <li><a href="/profile.html"   data-i18n="nav.profile">Profile</a></li>
+      <li><a href="/about.html"     data-i18n="nav.about">About</a></li>
+    </ul>
+  </nav>
+  <div class="nav-overlay" aria-hidden="true"></div>
+
+  <main>
+    <h1 data-i18n="resources.heading">All Resources</h1>
+
+    <div class="controls-bar">
+      <input
+        type="search"
+        class="search-bar"
+        id="search-input"
+        data-i18n="resources.search"
+        placeholder="Search resources…"
+        aria-label="Search resources"
+      />
+    </div>
+
+    <div class="page-layout" style="flex-direction: row; align-items: flex-start; gap: 1.5rem;">
+
+      <aside class="filter-panel" style="flex-shrink: 0; width: 220px;">
+        <h2 data-i18n="filter.heading">Filters</h2>
+        <div id="category-filters">
+          <h3 data-i18n="filter.categories">Categories</h3>
+          <div id="category-checkboxes"></div>
+        </div>
+        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--color-border);">
+          <label>
+            <input type="checkbox" id="free-only-toggle" />
+            <span data-i18n="filter.freeOnly">Free only</span>
+          </label>
+        </div>
+      </aside>
+
+      <div style="flex: 1; min-width: 0;">
+        <p class="loading-indicator" id="loading-indicator" hidden>
+          <span data-i18n="state.loading">Loading…</span>
+        </p>
+        <div id="error-state" hidden style="text-align: center;">
+          <p class="error-message" id="error-message"></p>
+          <button class="btn btn-ghost" id="retry-btn"></button>
+        </div>
+        <p class="empty-message" id="empty-state" hidden></p>
+        <div id="resource-list" class="resource-grid"></div>
+      </div>
+    </div>
+  </main>
+
+  <script src="/public/js/config.js"></script>
+  <script src="/public/js/translations.js"></script>
+  <script src="/public/js/i18n.js"></script>
+  <script src="/public/js/api.js"></script>
+  <script src="/public/js/cards.js"></script>
+  <script src="/public/js/nav.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      initLang();
+      initNav();
+
+      var langBtn = document.getElementById('lang-toggle-btn');
+      langBtn.addEventListener('click', function () {
+        var next = getLang() === 'en' ? 'fr' : 'en';
+        setLang(next);
+        langBtn.textContent = next === 'en' ? 'FR' : 'EN';
+        if (allResources.length > 0) renderFiltered();
+      });
+      langBtn.textContent = getLang() === 'en' ? 'FR' : 'EN';
+
+      var loadingIndicator   = document.getElementById('loading-indicator');
+      var errorState         = document.getElementById('error-state');
+      var errorMessage       = document.getElementById('error-message');
+      var retryBtn           = document.getElementById('retry-btn');
+      var emptyState         = document.getElementById('empty-state');
+      var resourceList       = document.getElementById('resource-list');
+      var searchInput        = document.getElementById('search-input');
+      var freeOnlyToggle     = document.getElementById('free-only-toggle');
+      var categoryCheckboxes = document.getElementById('category-checkboxes');
+
+      var allResources = [];
+      var filterState  = { query: '', categories: new Set(), freeOnly: false };
+
+      function showLoading() {
+        loadingIndicator.hidden = false;
+        errorState.hidden = true;
+        emptyState.hidden = true;
+        resourceList.hidden = true;
+      }
+      function hideLoading() {
+        loadingIndicator.hidden = true;
+        resourceList.hidden = false;
+      }
+      function showError() {
+        errorMessage.textContent = getString('error.load');
+        retryBtn.textContent     = getString('error.retry');
+        errorState.hidden = false;
+        loadingIndicator.hidden = true;
+        resourceList.hidden = true;
+      }
+
+      function renderFiltered() {
+        var lang     = getLang();
+        var filtered = applyFilters(allResources, filterState, lang);
+        resourceList.innerHTML = '';
+        if (filtered.length === 0) {
+          emptyState.textContent = getString('state.noResults');
+          emptyState.hidden = false;
+        } else {
+          emptyState.hidden = true;
+          filtered.forEach(function (r) { resourceList.appendChild(renderCard(r, lang)); });
+        }
+      }
+
+      function buildCategoryCheckboxes(categories) {
+        categoryCheckboxes.innerHTML = '';
+        categories.forEach(function (cat) {
+          var label    = document.createElement('label');
+          var checkbox = document.createElement('input');
+          checkbox.type  = 'checkbox';
+          checkbox.value = cat;
+          checkbox.addEventListener('change', function () {
+            if (this.checked) filterState.categories.add(cat);
+            else              filterState.categories.delete(cat);
+            renderFiltered();
+          });
+          var span = document.createElement('span');
+          span.textContent = cat;
+          label.appendChild(checkbox);
+          label.appendChild(span);
+          categoryCheckboxes.appendChild(label);
+        });
+      }
+
+      searchInput.addEventListener('input', function () {
+        filterState.query = this.value;
+        renderFiltered();
+      });
+      freeOnlyToggle.addEventListener('change', function () {
+        filterState.freeOnly = this.checked;
+        renderFiltered();
+      });
+      retryBtn.addEventListener('click', function () { location.reload(); });
+
+      showLoading();
+      fetchResources()
+        .then(function (resources) {
+          allResources = resources;
+          hideLoading();
+          buildCategoryCheckboxes(deriveCategories(resources));
+          renderFiltered();
+        })
+        .catch(showError);
+    });
+  </script>
+
+</body>
+</html>

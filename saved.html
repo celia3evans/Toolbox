@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Saved Resources — Toolbox</title>
+  <link rel="stylesheet" href="/public/css/style.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <a class="logo" href="/">Toolbox</a>
+    <div class="header-controls">
+      <button class="lang-toggle" aria-label="Switch language" id="lang-toggle-btn">FR</button>
+      <button class="hamburger" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+    </div>
+  </header>
+
+  <nav class="nav-menu" aria-hidden="true">
+    <button class="nav-close" aria-label="Close menu">&times;</button>
+    <ul>
+      <li><a href="/"               data-i18n="nav.home">Home</a></li>
+      <li><a href="/resources.html" data-i18n="nav.resources">All Resources</a></li>
+      <li><a href="/saved.html"     data-i18n="nav.saved">Saved</a></li>
+      <li><a href="/profile.html"   data-i18n="nav.profile">Profile</a></li>
+      <li><a href="/about.html"     data-i18n="nav.about">About</a></li>
+    </ul>
+  </nav>
+  <div class="nav-overlay" aria-hidden="true"></div>
+
+  <main>
+    <h1 data-i18n="saved.heading">Saved Resources</h1>
+
+    <p class="loading-indicator" id="loading-indicator" hidden>
+      <span data-i18n="state.loading">Loading…</span>
+    </p>
+
+    <div id="empty-state" hidden style="text-align: center;">
+      <p class="empty-message" data-i18n="state.noSaved">No saved resources yet.</p>
+      <a href="/resources.html" data-i18n="saved.browseAll">Browse all resources</a>
+    </div>
+
+    <div id="error-state" hidden style="text-align: center;">
+      <p class="error-message" id="error-message"></p>
+      <button class="btn btn-ghost" id="retry-btn"></button>
+    </div>
+
+    <section id="saved-list" class="resource-grid"></section>
+  </main>
+
+  <script src="/public/js/config.js"></script>
+  <script src="/public/js/translations.js"></script>
+  <script src="/public/js/i18n.js"></script>
+  <script src="/public/js/api.js"></script>
+  <script src="/public/js/cards.js"></script>
+  <script src="/public/js/nav.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      initLang();
+      initNav();
+
+      var langBtn = document.getElementById('lang-toggle-btn');
+      langBtn.addEventListener('click', function () {
+        var next = getLang() === 'en' ? 'fr' : 'en';
+        setLang(next);
+        langBtn.textContent = next === 'en' ? 'FR' : 'EN';
+      });
+      langBtn.textContent = getLang() === 'en' ? 'FR' : 'EN';
+
+      var loadingIndicator = document.getElementById('loading-indicator');
+      var emptyState       = document.getElementById('empty-state');
+      var errorState       = document.getElementById('error-state');
+      var errorMessage     = document.getElementById('error-message');
+      var retryBtn         = document.getElementById('retry-btn');
+      var savedList        = document.getElementById('saved-list');
+
+      function showLoading() {
+        loadingIndicator.hidden = false;
+        errorState.hidden = true;
+        emptyState.hidden = true;
+        savedList.hidden  = true;
+      }
+      function hideLoading() {
+        loadingIndicator.hidden = true;
+        savedList.hidden = false;
+      }
+      function showError() {
+        errorMessage.textContent = getString('error.load');
+        retryBtn.textContent     = getString('error.retry');
+        errorState.hidden = false;
+        loadingIndicator.hidden = true;
+        savedList.hidden = true;
+      }
+      function showEmpty() {
+        emptyState.hidden = false;
+        loadingIndicator.hidden = true;
+        savedList.hidden = true;
+        errorState.hidden = true;
+      }
+
+      function renderSavedCards(resources) {
+        var lang = getLang();
+        savedList.innerHTML = '';
+        if (resources.length === 0) { showEmpty(); return; }
+        resources.forEach(function (resource) {
+          var card    = renderCard(resource, lang);
+          var btnSave = card.querySelector('.btn-save');
+          if (btnSave) {
+            btnSave.addEventListener('click', function () {
+              setTimeout(function () {
+                if (btnSave.dataset.saved !== 'true') {
+                  card.remove();
+                  if (savedList.querySelectorAll('.resource-card').length === 0) showEmpty();
+                }
+              }, 0);
+            });
+          }
+          savedList.appendChild(card);
+        });
+      }
+
+      retryBtn.addEventListener('click', function () { location.reload(); });
+
+      var savedIds = getSavedIds();
+      if (savedIds.size === 0) { showEmpty(); return; }
+
+      showLoading();
+      fetchResources()
+        .then(function (resources) {
+          hideLoading();
+          renderSavedCards(savedFilter(resources, savedIds));
+        })
+        .catch(showError);
+    });
+  </script>
+
+</body>
+</html>

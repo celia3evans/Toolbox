@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CFES Toolbox</title>
+  <link rel="stylesheet" href="/public/css/style.css" />
+</head>
+<body>
+
+  <!-- ===== Shared Header ===== -->
+  <header class="site-header">
+    <a class="logo" href="/">CFES Toolbox</a>
+    <div class="header-controls">
+      <button class="lang-toggle" aria-label="Switch language" id="lang-toggle-btn">FR</button>
+      <button class="hamburger" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+    </div>
+  </header>
+
+  <!-- ===== Shared Nav Drawer ===== -->
+  <nav class="nav-menu" aria-hidden="true">
+    <button class="nav-close" aria-label="Close menu">&times;</button>
+    <ul>
+      <li><a href="/"               data-i18n="nav.home">Home</a></li>
+      <li><a href="/resources.html" data-i18n="nav.resources">All Resources</a></li>
+      <li><a href="/saved.html"     data-i18n="nav.saved">Saved</a></li>
+      <li><a href="/profile.html"   data-i18n="nav.profile">Profile</a></li>
+      <li><a href="/about.html"     data-i18n="nav.about">About</a></li>
+    </ul>
+  </nav>
+  <div class="nav-overlay" aria-hidden="true"></div>
+
+  <!-- ===== Main Content ===== -->
+  <main>
+    <section class="hero">
+      <h1 class="hero-title" data-i18n="landing.title">Toolbox</h1>
+      <p class="hero-tagline" data-i18n="landing.tagline">Forging strong engineering students and societies.</p>
+    </section>
+
+    <!-- 5 page bubbles — static, no API call needed -->
+    <nav class="bubble-grid" aria-label="Main navigation">
+      <a class="category-bubble" href="/resources.html" data-i18n="landing.bubble.resources">All Resources</a>
+      <a class="category-bubble" href="/saved.html"     data-i18n="landing.bubble.saved">Saved</a>
+      <a class="category-bubble" href="/profile.html"   data-i18n="landing.bubble.profile">Profile</a>
+      <a class="category-bubble" href="/about.html"     data-i18n="landing.bubble.about">About</a>
+    </nav>
+  </main>
+
+  <!-- ===== JS Modules ===== -->
+  <script src="/public/js/config.js"></script>
+  <script src="/public/js/translations.js"></script>
+  <script src="/public/js/i18n.js"></script>
+  <script src="/public/js/nav.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      initLang();
+      initNav();
+
+      var langBtn = document.getElementById('lang-toggle-btn');
+      langBtn.addEventListener('click', function () {
+        var next = getLang() === 'en' ? 'fr' : 'en';
+        setLang(next);
+        langBtn.textContent = next === 'en' ? 'FR' : 'EN';
+      });
+      langBtn.textContent = getLang() === 'en' ? 'FR' : 'EN';
+    });
+  </script>
+
+</body>
+</html>

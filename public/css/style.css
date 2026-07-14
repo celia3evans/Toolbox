@@ -1,0 +1,751 @@
+/* =============================================================================
+   Toolbox — Global Design System
+   Dark navy engineering-hub theme
+   ============================================================================= */
+
+/* =============================================================================
+   1. CSS Custom Properties
+   ============================================================================= */
+
+:root {
+  /* Colors */
+  --color-bg:            #0d1b2a;
+  --color-surface:       #1a2f45;
+  --color-surface-hover: #1f3a55;
+  --color-text:          #e8f0fe;
+  --color-text-muted:    #8ba3c7;
+  --color-accent:        #7eb8d4;
+  --color-accent-hover:  #9ecde6;
+  --color-border:        #2a4060;
+  --color-free:          #2ecc71;
+  --color-paid:          #e67e22;
+  --color-error:         #e74c3c;
+
+  /* Spacing */
+  --space-xs:  0.25rem;
+  --space-sm:  0.5rem;
+  --space-md:  1rem;
+  --space-lg:  1.5rem;
+  --space-xl:  2rem;
+  --space-2xl: 3rem;
+
+  /* Border Radius */
+  --radius-sm:   0.5rem;
+  --radius-md:   1rem;
+  --radius-lg:   2rem;
+  --radius-full: 9999px;
+
+  /* Typography */
+  --font-family:    'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-size-sm:   0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg:   1.25rem;
+  --font-size-xl:   1.5rem;
+  --font-size-hero: clamp(3rem, 8vw, 5rem);
+
+  /* Misc */
+  --transition:    150ms ease;
+  --shadow-card:   0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+
+/* =============================================================================
+   2. Reset & Base
+   ============================================================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  min-height: 100vh;
+  margin: 0;
+  line-height: 1.6;
+}
+
+a {
+  color: var(--color-accent);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+button {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+
+/* =============================================================================
+   3. Site Header
+   ============================================================================= */
+
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md) var(--space-xl);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.logo {
+  color: #fff;
+  font-weight: 700;
+  font-size: var(--font-size-xl);
+  text-decoration: none;
+  letter-spacing: -0.01em;
+}
+
+.logo:hover {
+  text-decoration: none;
+  color: var(--color-accent);
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+
+/* =============================================================================
+   4. Language Toggle
+   ============================================================================= */
+
+.lang-toggle {
+  background: transparent;
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  padding: var(--space-xs) var(--space-sm);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  transition:
+    border-color var(--transition),
+    color var(--transition);
+}
+
+.lang-toggle:hover,
+.lang-toggle:focus-visible {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  outline: none;
+}
+
+.lang-toggle:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+
+/* =============================================================================
+   5. Hamburger Button
+   ============================================================================= */
+
+.hamburger {
+  background: none;
+  border: none;
+  color: var(--color-text);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: var(--space-sm);
+  line-height: 1;
+  transition: color var(--transition);
+}
+
+.hamburger:hover {
+  color: var(--color-accent);
+}
+
+
+/* =============================================================================
+   6. Nav Menu (slide-in drawer from right)
+   ============================================================================= */
+
+.nav-menu {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: min(300px, 85vw);
+  background-color: var(--color-surface);
+  z-index: 200;
+  padding: var(--space-xl) var(--space-lg);
+  transform: translateX(100%);
+  transition: transform var(--transition);
+  overflow-y: auto;
+}
+
+.nav-menu[aria-hidden="true"] {
+  transform: translateX(100%);
+}
+
+.nav-menu[aria-hidden="false"] {
+  transform: translateX(0);
+}
+
+.nav-close {
+  background: none;
+  border: none;
+  color: var(--color-text);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: var(--space-sm);
+  position: absolute;
+  top: var(--space-md);
+  right: var(--space-md);
+  line-height: 1;
+  transition: color var(--transition);
+}
+
+.nav-close:hover {
+  color: var(--color-accent);
+}
+
+.nav-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  margin-top: var(--space-xl);
+}
+
+.nav-menu li {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.nav-menu li:first-child {
+  border-top: 1px solid var(--color-border);
+}
+
+.nav-menu li a {
+  display: block;
+  padding: var(--space-md) var(--space-sm);
+  color: var(--color-text);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+.nav-menu li a:hover,
+.nav-menu li a:focus-visible {
+  color: var(--color-accent);
+}
+
+
+/* =============================================================================
+   7. Nav Overlay
+   ============================================================================= */
+
+.nav-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 199;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition);
+}
+
+.nav-overlay[aria-hidden="false"] {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.nav-overlay[aria-hidden="true"] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+
+/* =============================================================================
+   8. Main Content
+   ============================================================================= */
+
+.page-main,
+main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-xl);
+}
+
+
+/* =============================================================================
+   9. Hero Section
+   ============================================================================= */
+
+.hero {
+  text-align: center;
+  padding: var(--space-2xl) var(--space-xl);
+}
+
+.hero-title {
+  font-size: var(--font-size-hero);
+  font-weight: 900;
+  color: #fff;
+  margin: 0;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.hero-tagline {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-muted);
+  margin-top: var(--space-sm);
+  margin-bottom: 0;
+}
+
+
+/* =============================================================================
+   10. Category Bubble Grid
+   ============================================================================= */
+
+.bubble-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-md);
+  max-width: 700px;
+  margin: var(--space-2xl) auto;
+}
+
+.category-bubble {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: var(--color-accent);
+  color: #0d1b2a;
+  border-radius: var(--radius-lg);
+  padding: var(--space-md) var(--space-lg);
+  min-height: 70px;
+  font-weight: 700;
+  font-size: var(--font-size-base);
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  transition:
+    background-color var(--transition),
+    transform var(--transition);
+}
+
+.category-bubble:hover {
+  background-color: var(--color-accent-hover);
+  transform: translateY(-2px);
+  text-decoration: none;
+  color: #0d1b2a;
+}
+
+.category-bubble:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+
+/* =============================================================================
+   11. Resource Card
+   ============================================================================= */
+
+.resource-card {
+  background-color: var(--color-surface);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  transition:
+    border-color var(--transition),
+    transform var(--transition),
+    box-shadow var(--transition);
+}
+
+.resource-card:hover {
+  border-color: var(--color-accent);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-sm);
+}
+
+.card-title {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.card-title a {
+  color: var(--color-text);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+.card-title a:hover {
+  color: var(--color-accent);
+  text-decoration: none;
+}
+
+.card-desc {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin-top: auto;
+}
+
+
+/* =============================================================================
+   12. Save Button
+   ============================================================================= */
+
+.btn-save {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: var(--space-xs);
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+  line-height: 1;
+  transition: color var(--transition);
+}
+
+.btn-save:hover,
+.btn-save:focus-visible {
+  color: var(--color-accent);
+}
+
+.btn-save[data-saved="true"] {
+  color: var(--color-accent);
+}
+
+
+/* =============================================================================
+   13. Badges
+   ============================================================================= */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: var(--radius-full);
+  padding: 2px var(--space-sm);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge-category {
+  background-color: var(--color-surface-hover);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+}
+
+.badge-free {
+  background-color: var(--color-free);
+  color: #0d1b2a;
+}
+
+.badge-paid {
+  background-color: var(--color-paid);
+  color: #fff;
+}
+
+
+/* =============================================================================
+   14. Resource List Grid
+   ============================================================================= */
+
+.resource-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--space-lg);
+}
+
+
+/* =============================================================================
+   15. Search and Filter
+   ============================================================================= */
+
+.search-bar {
+  width: 100%;
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--font-size-base);
+  font-family: var(--font-family);
+  transition: border-color var(--transition);
+  appearance: none;
+}
+
+.search-bar::placeholder {
+  color: var(--color-text-muted);
+}
+
+.search-bar:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.search-bar:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.filter-panel {
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  border: 1px solid var(--color-border);
+}
+
+.filter-panel h2,
+.filter-panel h3 {
+  margin-top: 0;
+  color: var(--color-text);
+  font-size: var(--font-size-base);
+  font-weight: 700;
+}
+
+.filter-panel label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  cursor: pointer;
+  padding: var(--space-xs) 0;
+  color: var(--color-text-muted);
+  transition: color var(--transition);
+}
+
+.filter-panel label:hover {
+  color: var(--color-text);
+}
+
+.filter-panel input[type="checkbox"] {
+  accent-color: var(--color-accent);
+  cursor: pointer;
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+}
+
+
+/* =============================================================================
+   16. Page Layout Utilities
+   ============================================================================= */
+
+.controls-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+  flex-wrap: wrap;
+}
+
+.page-layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.loading-indicator {
+  text-align: center;
+  color: var(--color-text-muted);
+  padding: var(--space-xl);
+}
+
+.error-message {
+  color: var(--color-error);
+  text-align: center;
+  padding: var(--space-xl);
+}
+
+.empty-message {
+  color: var(--color-text-muted);
+  text-align: center;
+  padding: var(--space-2xl);
+}
+
+/* Base button */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  background-color: var(--color-accent);
+  color: #0d1b2a;
+  border: none;
+  border-radius: var(--radius-full);
+  padding: var(--space-sm) var(--space-lg);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  font-family: var(--font-family);
+  cursor: pointer;
+  text-decoration: none;
+  transition:
+    background-color var(--transition),
+    transform var(--transition);
+}
+
+.btn:hover {
+  background-color: var(--color-accent-hover);
+  text-decoration: none;
+  color: #0d1b2a;
+  transform: translateY(-1px);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Ghost button variant */
+.btn-ghost {
+  background: transparent;
+  color: var(--color-accent);
+  border: 1px solid var(--color-accent);
+}
+
+.btn-ghost:hover {
+  background-color: rgba(126, 184, 212, 0.1);
+  color: var(--color-accent-hover);
+  border-color: var(--color-accent-hover);
+}
+
+
+/* =============================================================================
+   17. Profile Page
+   ============================================================================= */
+
+.profile-page {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-2xl) var(--space-xl);
+}
+
+.profile-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-xl);
+  box-shadow: var(--shadow-card);
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--color-border);
+}
+
+.profile-name {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  margin: 0;
+  color: var(--color-text);
+}
+
+.profile-email {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  margin: 0;
+}
+
+.signin-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-xl) 0;
+}
+
+.signin-description {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  text-align: center;
+  margin: 0;
+}
+
+
+/* =============================================================================
+   18. Responsive Breakpoints
+   ============================================================================= */
+
+@media (max-width: 768px) {
+  .bubble-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .resource-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .page-main,
+  main {
+    padding: var(--space-md);
+  }
+
+  .site-header {
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  .hero {
+    padding: var(--space-xl) var(--space-md);
+  }
+
+  .controls-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 480px) {
+  .bubble-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-title {
+    font-size: clamp(2.5rem, 10vw, 4rem);
+  }
+}
