@@ -146,7 +146,7 @@ vite.config.ts.timestamp-*
 credentials.json
 
 # Kiro docs
-.kiro/
+.kiro/*
 
 # VSCode Docs
-.vscode/
+.vscode/*
