@@ -144,3 +144,9 @@ vite.config.ts.timestamp-*
 
 # Google API credentials
 credentials.json
+
+# Kiro docs
+.kiro/
+
+# VSCode Docs
+.vscode/
