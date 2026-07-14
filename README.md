@@ -109,7 +109,7 @@ Ouvrez ensuite [http://localhost:7373](http://localhost:7373) dans votre navigat
 ## Project Structure | Structure du projet
 
 ```
-CFESFCEG-Toolbox/
+Toolbox/
 ├── server.js               # Bare Node.js HTTP server (port 7373)
 ├── routes/
 │   ├── index.js            # Route dispatcher
