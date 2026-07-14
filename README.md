@@ -1,4 +1,4 @@
-# CFES Toolbox | Boîte à outils de la FCEG
+# Toolbox
 
 A bilingual (EN/FR) multi-page resource hub for engineering students and student societies. Resources are stored in a Google Sheet and served by a bare Node.js HTTP server — no framework required.
 
@@ -27,8 +27,8 @@ A bilingual (EN/FR) multi-page resource hub for engineering students and student
 ## Setup | Configuration
 
 ```bash
-git clone https://github.com/celia3evans/CFESFCEG-Toolbox.git
-cd CFESFCEG-Toolbox
+git clone https://github.com/celia3evans/Toolbox.git
+cd Toolbox
 npm install
 ```
 
